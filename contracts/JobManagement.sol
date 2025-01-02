@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT 
 pragma solidity >=0.7.0 <0.9.0;
 
 import "./BidManagement.sol";
@@ -39,7 +39,7 @@ contract JobManagement is BidManagement {
     // Accepting a bid
     function acceptBidFromServiceProvider(uint _jobId, address _serviceProvider) public onlyClient {
         BidManagement.acceptBid(_jobId, _serviceProvider);
-        
+       
         // update the job (open -> closed)
         Job[] storage clientJobs = jobs[msg.sender];
         for (uint i = 0; i < clientJobs.length; i++) {
