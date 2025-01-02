@@ -38,7 +38,7 @@ contract JobManagement is BidManagement {
 
     // Accepting a bid
     function acceptBidFromServiceProvider(uint _jobId, address _serviceProvider) public onlyClient {
-        BidManagement.acceptBid(_jobId, _serviceProvider);
+        acceptBid(_jobId, _serviceProvider);
        
         // update the job (open -> closed)
         Job[] storage clientJobs = jobs[msg.sender];

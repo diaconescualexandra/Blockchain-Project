@@ -45,7 +45,7 @@ contract BidManagement is UserManagement {
     }
 
     // allow a client to accept a bid
-    function acceptBid(uint _jobId, address _serviceProvider) external payable onlyClient {
+    function acceptBid(uint _jobId, address _serviceProvider) public payable onlyClient {
         require(msg.value > 0, "Payment required");
         require(jobBids[_jobId][_serviceProvider].price > 0, "Bid not found");
         require(jobBids[_jobId][_serviceProvider].isAccepted == false, "Bid already accepted");
