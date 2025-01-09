@@ -7,15 +7,14 @@ contract ServiceListing is UserManagement {
 
     struct Service {
         string description;
-        uint price;
         address serviceProviderAddress;
     }
 
     mapping(address => Service[]) public listings;
 
     //service providers can add multiple services
-    function addService (string memory _description, uint _price) public onlyServiceProvider
+    function addService (string memory _description) internal onlyServiceProvider
     {
-        listings[msg.sender].push(Service(_description, _price, msg.sender));
+        listings[msg.sender].push(Service(_description, msg.sender));
     }
 }

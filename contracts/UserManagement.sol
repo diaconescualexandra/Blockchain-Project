@@ -24,4 +24,14 @@ contract UserManagement {
         _;
     }
 
+    modifier onlyClient() {
+        require(users[msg.sender].role == Role.Client, "Not Client");
+        _;
+    }
+
+    function getUserRole (address userAdd) public view returns (Role)
+    {
+        return users[userAdd].role;
+    }
+
 }

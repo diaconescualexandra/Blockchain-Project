@@ -20,11 +20,6 @@ contract BidManagement is UserManagement {
     event BidPlaced(uint indexed jobId, address indexed serviceProvider, uint price, string details);
     event BidAccepted(uint indexed jobId, address indexed serviceProvider, uint price);
 
-    modifier onlyClient() {
-        require(users[msg.sender].role == Role.Client, "Not Client");
-        _;
-    }
-
     // allow a provider to place a bid
     function placeBid(uint _jobId, uint _price, string memory _details) public onlyServiceProvider {
         require(_price > 0, "Bid price must be greater than zero");
@@ -44,22 +39,26 @@ contract BidManagement is UserManagement {
         emit BidPlaced(_jobId, msg.sender, _price, _details);
     }
 
+    function priceWithCommission(uint _price, uint _commission) public pure returns (uint) {
+        return _price + (_price * _commission / 100);
+    }
+
     // allow a client to accept a bid
     function acceptBid(uint _jobId, address _serviceProvider) public payable onlyClient {
         require(msg.value > 0, "Payment required");
         require(jobBids[_jobId][_serviceProvider].price > 0, "Bid not found");
         require(jobBids[_jobId][_serviceProvider].isAccepted == false, "Bid already accepted");
-
+        require(jobBids[_jobId][_serviceProvider].price == msg.value, "amount sent doesn't match the bid price");
         jobBids[_jobId][_serviceProvider].isAccepted = true;
 
-        uint bidAmount = jobBids[_jobId][_serviceProvider].price;
+        //uint bidAmount = jobBids[_jobId][_serviceProvider].price;
 
-        require(msg.value >= bidAmount, "Insufficient payment");
+        //require(msg.value >= bidAmount, "Insufficient payment");
 
         // paying 
-        payable(_serviceProvider).transfer(bidAmount);
+        //payable(_serviceProvider).transfer(bidAmount);
 
-        emit BidAccepted(_jobId, _serviceProvider, bidAmount);
+        emit BidAccepted(_jobId, _serviceProvider, jobBids[_jobId][_serviceProvider].price);
     }
 
     // get the bids for a job
