@@ -30,11 +30,6 @@ describe("EscrowService", function () {
         await userManagement.setUser("serviceProvider", 34, await serviceProvider.getAddress(), 0); 
         await userManagement.setUser("client", 34, await client.getAddress(), 1); 
 
-        //await userManagement.connect(client).setUserRole(await client.getAddress(), UserManagement.Role.Client); 
-
-        //const clientRole = await userManagement.getUserRole(await client.getAddress());
-        //expect(clientRole).to.equal(UserManagement.Role.Client);
-
     });
     
 
@@ -71,7 +66,7 @@ describe("EscrowService", function () {
     });
 
     it("should allow client to create a job with valid deadline", async function () {
-        const currentTimestamp = Math.floor(Date.now() / 1000); // Current UNIX timestamp in seconds
+        const currentTimestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
         const futureTimestamp = currentTimestamp + 60 * 60 * 24 * 7; // 7 days in the future
     
         await expect(
@@ -91,7 +86,7 @@ describe("EscrowService", function () {
     
         await jobManagement.connect(client).createJobTest("design website", futureTimestamp, 4000);
     
-        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); //place a bid
+        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); 
     
         await expect(
             jobManagement.connect(client).acceptBidFromServiceProvider(1, serviceProvider.address, { value: 4000 })
@@ -118,7 +113,7 @@ describe("EscrowService", function () {
         
         await jobManagement.connect(client).createJobTest("design website", futureTimestamp, 4000);
 
-        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); //place a bid
+        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); 
     
         await expect(
             jobManagement.connect(client).acceptBidFromServiceProvider(1, serviceProvider.address, { value: 4000 })
@@ -149,7 +144,7 @@ describe("EscrowService", function () {
           expect(Number(agreementStateTest.state)).to.equal(1);
     });
 
-    //deposit function require amount sent to be equal to the bid price
+    //deposit function require : amount sent to be equal to the bid price
     it("should revert amount sent doesn't match the bid price", async function () {
         const agreementPriceWithCommissionTest = 4000;
         const agreementPriceWithoutCommissionTest = 4400;
@@ -160,7 +155,7 @@ describe("EscrowService", function () {
         
         await jobManagement.connect(client).createJobTest("design website", futureTimestamp, 4000);
 
-        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); //place a bid
+        await jobManagement.connect(serviceProvider).placeBid(1, 4000, "High-quality design work"); 
     
         await expect(
             jobManagement.connect(client).acceptBidFromServiceProvider(1, serviceProvider.address, { value: 4000 })
