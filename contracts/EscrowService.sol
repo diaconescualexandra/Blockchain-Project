@@ -16,7 +16,7 @@ contract EscrowService {
         State state;    
         } 
 
-    uint platformMoneyFromCommission;
+    uint public platformMoneyFromCommission;
 
     event AgreementCreated(address indexed client, address indexed serviceProvider, uint amount);
     event FundsDeposited (uint indexed agreementId, address indexed client, address indexed serviceProvider, uint amount);
@@ -104,5 +104,14 @@ contract EscrowService {
 
         emit FundsWithdrawn(_agreementId, agreements[_agreementId].client, agreements[_agreementId].serviceProvider, balance);
     }
+
+    //retrieve the temporary jobmanagement address
+    function updateJobManagementAddress(address _newJobManagementAdd) external {
+        jobManagement = JobManagement(_newJobManagementAdd);
+    }
+
+    function testSetDepositedFunds(uint _agreementId, uint _amount) public onlyClient() {
+    depositedFunds[_agreementId] = _amount;
+}
 
 }

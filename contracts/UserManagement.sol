@@ -24,7 +24,7 @@ contract UserManagement {
         _;
     }
 
-    modifier onlyClient() {
+    modifier onlyClient() virtual{
         require(users[msg.sender].role == Role.Client, "Not Client");
         _;
     }
@@ -33,5 +33,11 @@ contract UserManagement {
     {
         return users[userAdd].role;
     }
+
+    function setUserRole(address _userAddress, Role _role) public {
+        require(msg.sender == _userAddress, "Only the user can set their own role"); 
+        users[_userAddress].role = _role; 
+    }
+
 
 }

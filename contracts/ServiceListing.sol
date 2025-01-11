@@ -17,4 +17,9 @@ contract ServiceListing is UserManagement {
     {
         listings[msg.sender].push(Service(_description, msg.sender));
     }
+
+    function addServiceTest (string memory _description) public
+    {
+        addService(_description);
+    }
 }

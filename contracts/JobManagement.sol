@@ -21,9 +21,12 @@ contract JobManagement is BidManagement {
 
     //so that jobmanagement knows which escrowservice to call 
     EscrowService escrowService;
-    constructor (address _escrowServiceAdd)
+    UserManagement userManagement;
+    constructor (address _escrowServiceAdd, address _userManagement)
     {
         escrowService = EscrowService(_escrowServiceAdd);
+        userManagement = UserManagement(_userManagement);
+
     }
 
     mapping(address => Job[]) public jobs;
@@ -33,6 +36,11 @@ contract JobManagement is BidManagement {
 
     event JobCreated(address indexed client, uint jobId, string description, uint deadline, uint maxBidValue);
     event JobStatusUpdated(address indexed client, uint jobId, JobStatus status);
+
+    modifier onlyClient() override {
+        require(userManagement.getUserRole(msg.sender) == UserManagement.Role.Client, "Not Client");
+        _;
+    }
 
     // Create a job
     function createJob(string memory _description, uint _deadline, uint _maxBidValue) internal onlyClient {
@@ -47,8 +55,12 @@ contract JobManagement is BidManagement {
         emit JobCreated(msg.sender, jobCounter, _description, _deadline, _maxBidValue);
     }
 
+    function createJobTest (string memory _description, uint _deadline, uint _maxBidValue) public {
+        createJob(_description, _deadline, _maxBidValue);
+    }
+
     // Accepting a bid
-    function acceptBidFromServiceProvider(uint _jobId, address _serviceProvider) public onlyClient {
+    function acceptBidFromServiceProvider(uint _jobId, address _serviceProvider) public payable onlyClient {
         acceptBid(_jobId, _serviceProvider);
         uint bidPrice = jobBids[_jobId][_serviceProvider].price;
         uint bidPriceWithCommission = priceWithCommission(bidPrice, 10); //10% commission
