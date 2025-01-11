@@ -43,7 +43,7 @@ contract JobManagement is BidManagement {
     }
 
     // Create a job
-    function createJob(string memory _description, uint _deadline, uint _maxBidValue) internal onlyClient {
+    function createJob(string memory _description, uint _deadline, uint _maxBidValue) public onlyClient {
         require(bytes(_description).length > 0, "Description cannot be empty");
         require(_deadline > block.timestamp, "Deadline must be in the future");
         require(_maxBidValue > 0, "Max bid value must be greater than zero");
