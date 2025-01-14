@@ -1,92 +1,113 @@
-// SPDX-License-Identifier: MIT 
-pragma solidity >=0.7.0 <0.9.0;
+onst { ethers } = require("hardhat");
+const { expect } = require("chai");
 
-import "./BidManagement.sol";
-import "./EscrowService.sol";
+describe("JobManagement", function () {
+    let userManagement;
+    let jobManagement;
+    let escrowService;
+    let  client,client2,client3, serviceProvider;
 
-contract JobManagement is BidManagement {
+  beforeEach(async function () {
+    [client,client2,client3, serviceProvider] = await ethers.getSigners();
 
-    enum JobStatus { Open, Closed }
+    const UserManagement = await ethers.getContractFactory("UserManagement");
+    userManagement = await UserManagement.deploy();
+    await userManagement.waitForDeployment();
+    const EscrowService = await ethers.getContractFactory("EscrowService");
+    escrowService = await EscrowService.deploy(userManagement.target, "0x0000000000000000000000000000000000000001");
+    await escrowService.waitForDeployment();
+    
+    const JobManagement = await ethers.getContractFactory("JobManagement");
+    jobManagement = await JobManagement.deploy(escrowService.target, userManagement.target);
+    await jobManagement.waitForDeployment();
+    await escrowService.updateJobManagementAddress(jobManagement.target);
+    // register users (client and service provider)
+    await userManagement.connect(client).setUser("Client", 30, client.address, 1); 
+    await userManagement.connect(client2).setUser("Client", 31, client2.address, 1);
+    await userManagement.connect(client3).setUser("Client", 33, client3.address, 1);
+    await userManagement.connect(serviceProvider).setUser("ServiceProvider", 30, serviceProvider.address, 0); 
+});
 
-    struct Job {
-        uint id;
-        string description;
-        uint deadline;
-        uint maxBidValue;
-        address clientAddress;
-        JobStatus status;
-        address selectedServiceProvider;
-        uint escrowServiceId;
-    }
+    it("Should allow a client to create a job", async function () {
+      const description = "Fixing the roof";
+      const deadline = Math.floor(Date.now() / 1000) + 3600; 
+      const maxBidValue = ethers.parseEther("1");
+      
+      await jobManagement.connect(client).createJobTest(description, deadline, maxBidValue);
 
-    //so that jobmanagement knows which escrowservice to call 
-    EscrowService escrowService;
-    UserManagement userManagement;
-    constructor (address _escrowServiceAdd, address _userManagement)
-    {
-        escrowService = EscrowService(_escrowServiceAdd);
-        userManagement = UserManagement(_userManagement);
+      const job = await jobManagement.getJobById(1);
+      expect(job.id).to.equal(1);
+      expect(job.description).to.equal(description);
+      expect(job.deadline).to.equal(deadline);
+      expect(job.maxBidValue).to.equal(maxBidValue);
+      expect(job.clientAddress).to.equal(client.address);
+      expect(job.status).to.equal(0);  // Open status
+    });
+    it("Should fail if the deadline is in the past", async function () {
+      const description = "Fixing the roof";
+      const deadline = Math.floor(Date.now() / 1000) - 3600; 
+      const maxBidValue = ethers.parseEther("1");
 
-    }
+      await expect(
+        jobManagement.connect(client).createJob(description, deadline, maxBidValue)
+      ).to.be.revertedWith("Deadline must be in the future");
+    });
 
-    mapping(address => Job[]) public jobs;
-    mapping(uint => Job) public jobById;
+    it("Should allow the client to accept a bid from a service provider", async function () {
+      const description = "Fixing the roof";
+      const deadline = Math.floor(Date.now() / 1000) + 3600; 
+      const maxBidValue = ethers.parseEther("1");
+      const jobId = 1;
+      const bidDetails = "We offer great service.";
 
-    uint private jobCounter;
+      await jobManagement.connect(client).createJob(description, deadline, maxBidValue);
+      await jobManagement.connect(serviceProvider).placeBid(jobId, maxBidValue, bidDetails);
+      // assume service provider has placed a bid 
+      await jobManagement.connect(client).acceptBidFromServiceProvider(1, serviceProvider.address,{
+        value: maxBidValue
+      });
 
-    event JobCreated(address indexed client, uint jobId, string description, uint deadline, uint maxBidValue);
-    event JobStatusUpdated(address indexed client, uint jobId, JobStatus status);
+      const job = await jobManagement.getJobById(1);
+      expect(job.status).to.equal(1); // job status should be "Closed"
+      expect(job.selectedServiceProvider).to.equal(serviceProvider.address);
+    });
+      it("Should return job details by ID", async function () {
+        const description = "Fixing the roof";
+        const deadline = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
+        const maxBidValue = ethers.parseEther("1");
+  
+        await jobManagement.connect(client).createJob(description, deadline, maxBidValue);
+        const job = await jobManagement.getJobById(1);
+  
+        expect(job.id).to.equal(1);
+        expect(job.description).to.equal(description);
+        expect(job.deadline).to.equal(deadline);
+        expect(job.maxBidValue).to.equal(maxBidValue);
+        expect(job.clientAddress).to.equal(client.address);
+      });
 
-    modifier onlyClient() override {
-        require(userManagement.getUserRole(msg.sender) == UserManagement.Role.Client, "Not Client");
-        _;
-    }
+      it("should allow clients to create jobs and fetch all jobs", async function () {
+        await jobManagement
+          .connect(client)
+          .createJobTest("Job 1 Description", Math.floor(Date.now() / 1000) + 3600, ethers.parseEther("1"));
+    
+        await jobManagement
+          .connect(client2)
+          .createJobTest("Job 2 Description", Math.floor(Date.now() / 1000) + 7200, ethers.parseEther("2"));
+    
+        await jobManagement
+          .connect(client3)
+          .createJobTest("Job 3 Description", Math.floor(Date.now() / 1000) + 10800, ethers.parseEther("3"));
+    
+        const jobs = await jobManagement.getAllJobs();
+    
+        expect(jobs.descriptions[0]).to.equal("Job 1 Description");
+        expect(jobs.descriptions[1]).to.equal("Job 2 Description");
+        expect(jobs.descriptions[2]).to.equal("Job 3 Description");
+        expect(jobs.maxBidValues[0].toString()).to.equal(ethers.parseEther("1").toString());
+        expect(jobs.maxBidValues[1].toString()).to.equal(ethers.parseEther("2").toString());
+        expect(jobs.maxBidValues[2].toString()).to.equal(ethers.parseEther("3").toString());
+      });
+    
 
-    // Create a job
-    function createJob(string memory _description, uint _deadline, uint _maxBidValue) public onlyClient {
-        require(bytes(_description).length > 0, "Description cannot be empty");
-        require(_deadline > block.timestamp, "Deadline must be in the future");
-        require(_maxBidValue > 0, "Max bid value must be greater than zero");
-
-        jobCounter++;
-        jobs[msg.sender].push(Job(jobCounter, _description, _deadline, _maxBidValue, msg.sender, JobStatus.Open, address(0), 0));
-        jobById[jobCounter] = Job(jobCounter, _description, _deadline, _maxBidValue, msg.sender, JobStatus.Open, address(0), 0);
-
-        emit JobCreated(msg.sender, jobCounter, _description, _deadline, _maxBidValue);
-    }
-
-    function createJobTest (string memory _description, uint _deadline, uint _maxBidValue) public {
-        createJob(_description, _deadline, _maxBidValue);
-    }
-
-    // Accepting a bid
-    function acceptBidFromServiceProvider(uint _jobId, address _serviceProvider) public payable onlyClient {
-        acceptBid(_jobId, _serviceProvider);
-        uint bidPrice = jobBids[_jobId][_serviceProvider].price;
-        uint bidPriceWithCommission = priceWithCommission(bidPrice, 10); //10% commission
-
-       uint agreementId = escrowService.newAgreement(msg.sender, _serviceProvider, bidPriceWithCommission, bidPrice); 
-
-        // update the job (open -> closed)
-        Job[] storage clientJobs = jobs[msg.sender];
-        for (uint i = 0; i < clientJobs.length; i++) {
-            if (clientJobs[i].id == _jobId) {
-                clientJobs[i].status = JobStatus.Closed;
-                clientJobs[i].escrowServiceId = agreementId; //store the escrow service id for the job
-                clientJobs[i].selectedServiceProvider = _serviceProvider;
-                jobById[_jobId] = clientJobs[i];
-                break;
-            }
-        }
-        
-        emit JobStatusUpdated(msg.sender, _jobId, JobStatus.Closed);
-    }
-
-    //get job by id
-    function getJobById(uint _jobId) external view returns (Job memory) {
-        return jobById[_jobId];
-    }
-
-
-
-}
+});
