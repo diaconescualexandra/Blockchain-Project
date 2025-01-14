@@ -32,6 +32,8 @@ contract JobManagement is BidManagement {
     mapping(address => Job[]) public jobs;
     mapping(uint => Job) public jobById;
 
+  
+
     uint private jobCounter;
 
     event JobCreated(address indexed client, uint jobId, string description, uint deadline, uint maxBidValue);
@@ -41,7 +43,6 @@ contract JobManagement is BidManagement {
         require(userManagement.getUserRole(msg.sender) == UserManagement.Role.Client, "Not Client");
         _;
     }
-
     // Create a job
     function createJob(string memory _description, uint _deadline, uint _maxBidValue) internal onlyClient {
         require(bytes(_description).length > 0, "Description cannot be empty");
@@ -86,6 +87,33 @@ contract JobManagement is BidManagement {
     function getJobById(uint _jobId) external view returns (Job memory) {
         return jobById[_jobId];
     }
+  
+function getAllJobs() external view returns (
+    string[] memory descriptions,
+    uint[] memory deadlines,
+    uint[] memory maxBidValues
+) {
+    uint totalJobCount = jobCounter;
+
+    descriptions = new string[](totalJobCount);
+    deadlines = new uint[](totalJobCount);
+    maxBidValues = new uint[](totalJobCount);
+
+    uint index = 0;
+
+    for (uint i = 1; i <= totalJobCount; i++) {
+        if (jobById[i].id == 0) {
+            continue; 
+        }
+        Job storage job = jobById[i];
+        descriptions[index] = job.description;
+        deadlines[index] = job.deadline;
+        maxBidValues[index] = job.maxBidValue;
+        index++;
+    }
+
+    return (descriptions, deadlines, maxBidValues);
+}
 
 
 
