@@ -88,32 +88,32 @@ contract JobManagement is BidManagement {
         return jobById[_jobId];
     }
   
-    function getAllJobs() external view returns (
-        string[] memory descriptions,
-        uint[] memory deadlines,
-        uint[] memory maxBidValues
-    ) {
-        uint totalJobCount = jobCounter;
+function getAllJobs() external view returns (
+    string[] memory descriptions,
+    uint[] memory deadlines,
+    uint[] memory maxBidValues
+) {
+    uint totalJobCount = jobCounter;
 
-        descriptions = new string[](totalJobCount);
-        deadlines = new uint[](totalJobCount);
-        maxBidValues = new uint[](totalJobCount);
+    descriptions = new string[](totalJobCount);
+    deadlines = new uint[](totalJobCount);
+    maxBidValues = new uint[](totalJobCount);
 
-        uint index = 0;
+    uint index = 0;
 
-        for (uint i = 1; i <= totalJobCount; i++) {
-            if (jobById[i].id == 0) {
-                continue; 
-            }
-            Job storage job = jobById[i];
-            descriptions[index] = job.description;
-            deadlines[index] = job.deadline;
-            maxBidValues[index] = job.maxBidValue;
-            index++;
+    for (uint i = 1; i <= totalJobCount; i++) {
+        if (jobById[i].id == 0) {
+            continue; 
         }
-
-        return (descriptions, deadlines, maxBidValues);
+        Job storage job = jobById[i];
+        descriptions[index] = job.description;
+        deadlines[index] = job.deadline;
+        maxBidValues[index] = job.maxBidValue;
+        index++;
     }
+
+    return (descriptions, deadlines, maxBidValues);
+}
 
 
 
