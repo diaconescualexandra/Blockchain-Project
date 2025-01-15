@@ -291,29 +291,6 @@ export const contractABIJob = [
 				"type": "uint256"
 			}
 		],
-		"name": "createJob",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_description",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_deadline",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_maxBidValue",
-				"type": "uint256"
-			}
-		],
 		"name": "createJobTest",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -777,6 +754,7 @@ export const contractABIJob = [
 		"type": "function"
 	}
 ];
+			
 export const contractAddressBid = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
 export const contractABIBid = [
 	{
