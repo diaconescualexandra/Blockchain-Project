@@ -154,7 +154,7 @@ const ViewJobsPage = () => {
               ))}
             </tbody>
           </table>
-          <button onClick={() => setShowBids(false)}>Închide</button>
+          <button onClick={() => setShowBids(false)}>Close</button>
         </div>
       )}
     </div>
