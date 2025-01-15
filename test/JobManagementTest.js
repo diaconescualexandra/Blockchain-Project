@@ -49,7 +49,7 @@ describe("JobManagement", function () {
       const maxBidValue = ethers.parseEther("1");
 
       await expect(
-        jobManagement.connect(client).createJob(description, deadline, maxBidValue)
+        jobManagement.connect(client).createJobTest(description, deadline, maxBidValue)
       ).to.be.revertedWith("Deadline must be in the future");
     });
 
@@ -60,7 +60,7 @@ describe("JobManagement", function () {
       const jobId = 1;
       const bidDetails = "We offer great service.";
 
-      await jobManagement.connect(client).createJob(description, deadline, maxBidValue);
+      await jobManagement.connect(client).createJobTest(description, deadline, maxBidValue);
       await jobManagement.connect(serviceProvider).placeBid(jobId, maxBidValue, bidDetails);
       // assume service provider has placed a bid 
       await jobManagement.connect(client).acceptBidFromServiceProvider(1, serviceProvider.address,{
@@ -76,7 +76,7 @@ describe("JobManagement", function () {
         const deadline = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
         const maxBidValue = ethers.parseEther("1");
   
-        await jobManagement.connect(client).createJob(description, deadline, maxBidValue);
+        await jobManagement.connect(client).createJobTest(description, deadline, maxBidValue);
         const job = await jobManagement.getJobById(1);
   
         expect(job.id).to.equal(1);
