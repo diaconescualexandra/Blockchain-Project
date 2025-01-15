@@ -49,7 +49,7 @@ const CreateJobPage = () => {
 
     try {
       const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000); 
-      const tx = await contract.createJob(
+      const tx = await contract.createJobTest(
         description,
         deadlineTimestamp,
         ethers.parseUnits(maxBidValue, "ether") 
