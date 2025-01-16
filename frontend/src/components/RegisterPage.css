@@ -1,0 +1,129 @@
+/* General styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background-color: #e0f7fa; /* Light blue background */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+  }
+  
+  .register-container {
+    max-width: 600px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    line-height: 1.8; /* Add space between lines */
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 60px; /* Increased space below the title to create more distance */
+    color: #5f6368;
+  }
+  
+  .connect-btn {
+    background-color: #0a74da;
+    color: white;
+    padding: 20px 40px; /* Larger padding for bigger button */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.5rem; /* Larger font size */
+    margin-bottom: 40px; /* Space between this button and the next section */
+    transition: background-color 0.3s ease;
+  }
+  
+  .connect-btn:hover {
+    background-color: #005bb5;
+  }
+  
+  .form-container {
+    margin-top: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px; /* Add space between label and input */
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 12px; /* Larger padding for the input fields */
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px; /* Space between input fields */
+  }
+  
+  .input-field:focus {
+    border-color: #0a74da;
+    outline: none;
+  }
+  
+  .role-selection {
+    margin-top: 20px;
+  }
+  
+  .role-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 15px 30px; /* Larger padding for role buttons */
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2rem; /* Larger font size */
+  }
+  
+  .role-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .register-btn {
+    background-color: #0a74da;
+    color: white;
+    padding: 20px 40px; /* Larger padding */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.5rem; /* Larger font size */
+    margin-top: 20px;
+  }
+  
+  .register-btn:hover {
+    background-color: #005bb5;
+  }
+  
+  .register-btn:disabled {
+    background-color: #d1e1f0;
+    cursor: not-allowed;
+  }
+  
+  form {
+    display: grid;
+    gap: 25px; /* Add more space between form elements */
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 20px; /* Space between paragraphs */
+  }
+  
