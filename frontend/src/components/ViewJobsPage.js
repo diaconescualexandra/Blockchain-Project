@@ -14,35 +14,40 @@ const ViewJobsPage = () => {
   const [selectedJobId, setSelectedJobId] = useState(null); 
 
   const initContract = async () => {
-    if (window.ethereum) {
-      const web3Provider = new ethers.BrowserProvider(window.ethereum);
-      setProvider(web3Provider);
+    try{
+      if (window.ethereum) {
+        const web3Provider = new ethers.BrowserProvider(window.ethereum);
+        setProvider(web3Provider);
 
-      const signer = await web3Provider.getSigner();
-      setAccount(await signer.getAddress());
+        const signer = await web3Provider.getSigner();
+        setAccount(await signer.getAddress());
 
-      const jobContract = new ethers.Contract(
-        contractAddressJob,
-        contractABIJob,
-        signer
-      );
-      setContractJob(jobContract);
+        const jobContract = new ethers.Contract(
+          contractAddressJob,
+          contractABIJob,
+          signer
+        );
+        setContractJob(jobContract);
 
-      const bidContract = new ethers.Contract(
-        contractAddressBid,
-        contractABIBid,
-        signer
-      );
-      setContractBid(bidContract);
-    } else {
-      alert("MetaMask is not installed!");
+        const bidContract = new ethers.Contract(
+          contractAddressBid,
+          contractABIBid,
+          signer
+        );
+        setContractBid(bidContract);
+      } else {
+        alert("MetaMask is not installed!");
+      }
+    }catch (err) {
+      console.error("Contract initialization error:", err);
+      alert(`Contract initialization failed: ${err.message}`);
     }
   };
 
   // Fetch jobs
   const fetchJobs = useCallback(async () => {
     try {
-      const [descriptions, deadlines, maxBidValues] = await contractJob.getAllJobs();
+      const [descriptions, deadlines, maxBidValues] = await contractJob.getAllJobs(); //Inițierea tranzacțiilor de transfer sau de apel de funcții, utilizând ether.js
       const jobs = descriptions.map((description, index) => ({
         id: index + 1,
         description,
@@ -53,7 +58,7 @@ const ViewJobsPage = () => {
       setJobs(jobs);
       setLoading(false);
     } catch (err) {
-      console.error("Eroare la obținerea joburilor:", err);
+      console.error("Error while fetching jobs", err);
       setLoading(false);
     }
   }, [contractJob]);

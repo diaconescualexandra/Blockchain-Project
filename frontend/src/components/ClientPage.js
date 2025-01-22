@@ -14,20 +14,27 @@ const CreateJobPage = () => {
 
   // Initialize contract interaction
   const initContract = async () => {
-    if (window.ethereum) {
-      const web3Provider = new ethers.BrowserProvider(window.ethereum);
-      setProvider(web3Provider);
+    try{
+      if (window.ethereum) {
+        const web3Provider = new ethers.BrowserProvider(window.ethereum);
+        setProvider(web3Provider);
 
-      const signer = await web3Provider.getSigner();
-      const jobContract = new ethers.Contract(
-        contractAddressJob,
-        contractABIJob,
-        signer
-      );
-      setContract(jobContract);
-    } else {
-      alert("MetaMask is not installed!");
-    }
+        const signer = await web3Provider.getSigner();
+        const jobContract = new ethers.Contract(
+          contractAddressJob,
+          contractABIJob,
+          signer
+        );
+
+        setContract(jobContract);
+
+      } else {
+        alert("MetaMask is not installed!");
+      }
+  }catch (err) {
+    console.error("Contract initialization error:", err);
+    alert(`Contract initialization failed: ${err.message}`);
+  }
   };
 
   // Handle input change for the form
@@ -47,7 +54,7 @@ const CreateJobPage = () => {
       return;
     }
 
-    try {
+    try {                                                                              //tratare exceptii
       const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000); 
       const tx = await contract.createJobTest(
         description,
@@ -64,10 +71,32 @@ const CreateJobPage = () => {
     }
   };
   
-  // Initialize contract on component load
+  // Initialize contract on component load 
   React.useEffect(() => {
     initContract();
-  }, []);
+  }, []); 
+
+  //event treating
+  React.useEffect(() => {
+    if (!contract) return;
+
+    const handleJobCreated = (client, jobId, description, deadline, maxBidValue) => {
+      console.log("JobCreated event received:", {
+        client,
+        jobId: jobId.toString(),
+        description,
+        deadline: deadline.toString(),
+        maxBidValue: ethers.formatEther(maxBidValue)
+      });
+    };
+
+  
+    contract.on("JobCreated", handleJobCreated);
+
+    return () => {
+      contract.off("JobCreated", handleJobCreated);
+    };
+  }, [contract]); 
 
   return (
     <div>

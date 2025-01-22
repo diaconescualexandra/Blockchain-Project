@@ -2,103 +2,127 @@ export const contractAddressUser = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 export const contractABIUser = [
 	{
         "inputs": [
-            {
-            "internalType": "address",
-            "name": "userAdd",
-            "type": "address"
-            }
-        ],
-        "name": "getUserRole",
-        "outputs": [
-            {
-            "internalType": "enum UserManagement.Role",
-            "name": "",
-            "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         },
         {
-        "inputs": [
-            {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
-            },
-            {
-            "internalType": "uint256",
-            "name": "_age",
-            "type": "uint256"
-            },
-            {
-            "internalType": "address",
-            "name": "_walletAddress",
-            "type": "address"
-            },
-            {
-            "internalType": "uint256",
-            "name": "_role",
-            "type": "uint256"
-            }
-        ],
-        "name": "setUser",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
+          "indexed": true,
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
         },
         {
-        "inputs": [
-            {
-            "internalType": "address",
-            "name": "_userAddress",
-            "type": "address"
-            },
-            {
-            "internalType": "enum UserManagement.Role",
-            "name": "_role",
-            "type": "uint8"
-            }
-        ],
-        "name": "setUserRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-        },
-        {
-        "inputs": [
-            {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-            }
-        ],
-        "name": "users",
-        "outputs": [
-            {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-            },
-            {
-            "internalType": "uint256",
-            "name": "age",
-            "type": "uint256"
-            },
-            {
-            "internalType": "address",
-            "name": "walletAddress",
-            "type": "address"
-            },
-            {
-            "internalType": "enum UserManagement.Role",
-            "name": "role",
-            "type": "uint8"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "role",
+          "type": "uint256"
         }
+      ],
+      "name": "UserAdded",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "userAdd",
+          "type": "address"
+        }
+      ],
+      "name": "getUserRole",
+      "outputs": [
+        {
+          "internalType": "enum UserManagement.Role",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_role",
+          "type": "uint256"
+        }
+      ],
+      "name": "setUser",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_userAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum UserManagement.Role",
+          "name": "_role",
+          "type": "uint8"
+        }
+      ],
+      "name": "setUserRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "users",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum UserManagement.Role",
+          "name": "role",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
 ];
 export const contractAddressJob = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
 export const contractABIJob = [

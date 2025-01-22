@@ -25,7 +25,7 @@ const ViewJobsPage1 = () => {
       const bidContract = new ethers.Contract(contractAddressBid, contractABIBid, signer);
       setContractBid(bidContract);
     } else {
-      alert("MetaMask nu este instalat!");
+      alert("MetaMask is not installed!");
     }
   };
 
@@ -74,6 +74,29 @@ const ViewJobsPage1 = () => {
       fetchJobs();
     }
   }, [contractJob, account]);
+
+
+  //event treating
+  useEffect(() => {
+  
+      if (!contractBid) return;
+      
+          const handleBidPlaced = (jobId, serviceProvider, price, details) => {
+            console.log("BidPlaced event received:", {
+              jobId,
+              serviceProvider,
+              price,
+              details,
+            });
+          };
+      
+        
+          contractBid.on("BidPlaced", handleBidPlaced);
+      
+          return () => {
+            contractBid.off("BidPlaced", handleBidPlaced);
+          };
+    }, [contractBid]);
 
   return (
     <div>

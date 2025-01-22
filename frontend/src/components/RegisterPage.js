@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { ethers } from "ethers";
 import { useNavigate } from "react-router-dom";
 import { contractAddressUser, contractABIUser } from "./contractConfig";
 import "./RegisterPage.css";
+import { formatEther } from "ethers";
+
 const RegisterPage = () => {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [contract, setContract] = useState(null);
+  const [contractUser, setContract] = useState(null);
+  const [balance, setBalance] = useState(null);
   const [userData, setUserData] = useState({
     name: "",
     age: "",
@@ -28,6 +31,12 @@ const RegisterPage = () => {
           signer
         );
         setContract(userContract);
+
+        //event treating
+        userContract.on("UserAdded", (name, walletAddress, role) => {
+          console.log("UserAdded event received:", { name, walletAddress, role :Number(role) });
+        });
+
       } else {
         alert("MetaMask is not installed!");
       }
@@ -35,12 +44,20 @@ const RegisterPage = () => {
     init();
   }, []);
 
+  
+
+  //getting balance and address from metamask
   const connectWallet = async () => {
     try {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
       setAccount(accounts[0]);
+      const accountBalanceWEI = await window.ethereum.request({
+        "method": "eth_getBalance",
+        "params": [accounts[0]],})
+        const accountBalanceETH = formatEther(accountBalanceWEI);
+        setBalance(accountBalanceETH);
     } catch (err) {
       console.error("Connection eror:", err);
     }
@@ -57,7 +74,7 @@ const RegisterPage = () => {
       return;
     }
     try {
-      const tx = await contract.setUser(
+      const tx = await contractUser.setUser(
         userData.name,
         parseInt(userData.age),
         account,
@@ -84,6 +101,9 @@ const RegisterPage = () => {
       ) : (
         <div>
           <p>Connected address: {account}</p>
+          <div>
+            <p>Account balance: {balance} </p>
+          </div>
         </div>
       )}
 
