@@ -14,9 +14,12 @@ contract UserManagement {
 
     mapping (address => User ) public users;
 
+    event UserAdded(string name, address indexed walletAddress, uint role );
+
     //registering a user
     function setUser (string memory _name, uint _age, address _walletAddress, uint _role) public {
         users [_walletAddress] = User (_name, _age, _walletAddress, Role(_role));
+        emit UserAdded(_name, _walletAddress, _role);
     }
 
     modifier onlyServiceProvider() {
