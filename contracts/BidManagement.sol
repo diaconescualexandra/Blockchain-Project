@@ -51,13 +51,6 @@ contract BidManagement is UserManagement {
         require(jobBids[_jobId][_serviceProvider].price == msg.value, "amount sent doesn't match the bid price");
         jobBids[_jobId][_serviceProvider].isAccepted = true;
 
-        //uint bidAmount = jobBids[_jobId][_serviceProvider].price;
-
-        //require(msg.value >= bidAmount, "Insufficient payment");
-
-        // paying 
-        //payable(_serviceProvider).transfer(bidAmount);
-
         emit BidAccepted(_jobId, _serviceProvider, jobBids[_jobId][_serviceProvider].price);
     }
 
